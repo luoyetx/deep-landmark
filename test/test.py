@@ -17,6 +17,7 @@ TXT = 'dataset/train/testImageList.txt'
 template = '''################## Summary #####################
 Test Number: %d
 Time Consume: %.03f s
+FPS: %.03f
 LEVEL - %d
 Mean Error:
     Left Eye       = %f
