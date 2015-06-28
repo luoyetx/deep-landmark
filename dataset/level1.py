@@ -32,8 +32,8 @@ def process_images(ftxt, output):
     with open(ftxt, 'r') as fd:
         lines = fd.readlines()
     number = len(lines) # how many faces
-    imgs = np.zeros((number*2, 1, SIZE_W, SIZE_H))
-    landmarks = np.zeros((number*2, 10))
+    imgs = np.zeros((number*1, 1, SIZE_W, SIZE_H))
+    landmarks = np.zeros((number*1, 10))
 
     for idx, line in enumerate(lines):
         line = line.strip()
@@ -89,13 +89,6 @@ def process_images(ftxt, output):
         # # landmarks[idx+4*number] = landmark_flipped.reshape((10))
         # # imgs[idx+4*number] = face_flipped_by_x.reshape((1, SIZE_W, SIZE_H))
 
-
-        # flip
-        (face_flipped_by_x, landmark_flipped) = flip(face, landmark)
-        #show_landmark(face_flipped_by_x, landmark_flipped)
-        landmarks[idx+1*number] = landmark_flipped.reshape((10))
-        imgs[idx+1*number] = face_flipped_by_x.reshape((1, SIZE_W, SIZE_H))
-
         # origin
         for index, one in enumerate(landmark):
             rv = ((one[0]-bbox[0])/(bbox[1]-bbox[0]), (one[1]-bbox[2])/(bbox[3]-bbox[2]))
@@ -103,6 +96,12 @@ def process_images(ftxt, output):
         #show_landmark(face, landmark)
         landmarks[idx] = landmark.reshape((10))
         imgs[idx] = face.reshape((1, SIZE_W, SIZE_H))
+
+        # flip
+        #(face_flipped_by_x, landmark_flipped) = flip(face, landmark)
+        #show_landmark(face_flipped_by_x, landmark_flipped)
+        #landmarks[idx+1*number] = landmark_flipped.reshape((10))
+        #imgs[idx+1*number] = face_flipped_by_x.reshape((1, SIZE_W, SIZE_H))
 
     imgs = processImage(imgs)
     # for idx in range(len(imgs)):
