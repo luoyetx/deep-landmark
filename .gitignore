@@ -1,6 +1,7 @@
 *.pyc
 
 *.log
+*.csv
 *.png
 
 *.caffemodel
