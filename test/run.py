@@ -11,10 +11,7 @@ from common import getDataFromTxt, createDir, logger, drawLandmark
 from common import level1, level2, level3
 
 
-OUTPUT = 'dataset/test/out'
-createDir(OUTPUT)
 TXT = 'dataset/test/lfpw_test_249_bbox.txt'
-
 
 if __name__ == '__main__':
     assert(len(sys.argv) == 2)
@@ -28,6 +25,8 @@ if __name__ == '__main__':
     else:
         P = level3
 
+    OUTPUT = 'dataset/test/out_{0}'.format(level)
+    createDir(OUTPUT)
     data = getDataFromTxt(TXT, with_landmark=False)
     for imgPath, bbox in data:
         img = cv2.imread(imgPath)
