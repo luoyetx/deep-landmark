@@ -18,7 +18,7 @@ max_iter: 100000
 snapshot: 10000
 snapshot_prefix: "model/{level}_{name}/"
 
-log_file: "log/{level}_{name}_train.log"
+log_file: "log/{level}_{name}_train.csv"
 test_compute_loss: true
 
 solver_mode: {mode}
