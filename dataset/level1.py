@@ -15,7 +15,7 @@ import numpy as np
 import h5py
 from common import shuffle_in_unison_scary, logger, createDir, processImage
 from common import getDataFromTxt
-from utils import show_landmark
+from utils import show_landmark, flip
 
 
 TRAIN = 'dataset/train'
@@ -92,7 +92,7 @@ def process_images(ftxt, output):
 
         # flip
         (face_flipped_by_x, landmark_flipped) = flip(face, landmark)
-        show_landmark(face_flipped_by_x, landmark_flipped)
+        #show_landmark(face_flipped_by_x, landmark_flipped)
         landmarks[idx+1*number] = landmark_flipped.reshape((10))
         imgs[idx+1*number] = face_flipped_by_x.reshape((1, SIZE_W, SIZE_H))
 
