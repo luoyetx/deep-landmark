@@ -32,9 +32,9 @@ def getCNNs(level=1):
     types = ['LE1', 'LE2', 'RE1', 'RE2', 'N1', 'N2', 'LM1', 'LM2', 'RM1', 'RM2']
     if level == 1:
         if cnn['level1'] is None:
-            F = CNN('prototxt/1_F_deploy.prototxt', 'model/1_F/%s'%(m))
-            EN = CNN('prototxt/1_EN_deploy.prototxt', 'model/1_EN/%s'%(m))
-            NM = CNN('prototxt/1_NM_deploy.prototxt', 'model/1_NM/%s'%(m))
+            F = CNN('prototxt/1_F_deploy.prototxt', 'model/1_F/%s'%('_iter_100000.caffemodel'))
+            EN = CNN('prototxt/1_EN_deploy.prototxt', 'model/1_EN/%s'%('_iter_100000.caffemodel'))
+            NM = CNN('prototxt/1_NM_deploy.prototxt', 'model/1_NM/%s'%('_iter_100000.caffemodel'))
             cnn['level1'] = [F, EN, NM]
         return cnn['level1']
     elif level == 2:
