@@ -174,4 +174,7 @@ layer {{
     bottom: "fc2"
     bottom: "landmark"
     top: "loss"
+    include {{
+        phase: TRAIN
+    }}
 }}

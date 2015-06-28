@@ -13,11 +13,12 @@ power: 0.75
 
 display: 200
 
-max_iter: 50000
+max_iter: 100000
 
 snapshot: 10000
 snapshot_prefix: "model/{level}_{name}/"
 
 log_file: "log/{level}_{name}_train.log"
+test_compute_loss: true
 
 solver_mode: {mode}

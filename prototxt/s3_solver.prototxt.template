@@ -19,5 +19,6 @@ snapshot: 10000
 snapshot_prefix: "model/{level}_{name}/"
 
 log_file: "log/{level}_{name}_train.log"
+test_compute_loss: true
 
 solver_mode: {mode}
