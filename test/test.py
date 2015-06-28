@@ -83,25 +83,20 @@ if __name__ == '__main__':
     error = E(level)
     t = time.clock() - t
 
-    print '\n'
-    print '################## Summary #####################'
-    print 'Test Number:', len(error)
-    print 'Time Consume:', t, 's'
-    print 'LEVEL -', level
-    print 'Mean Error'
-    print error.mean(0)
-    # failure
     N = len(error)
+    fps = N / t
+    errorMean = error.mean(0)
+    # failure
     failure = np.zeros(5)
     threshold = 0.05
     for i in range(5):
         failure[i] = float(sum(error[:, i] > threshold)) / N
-    print 'Average Failure'
-    print failure
+    # log string
+    s = template % (N, t, fps, level, errorMean[0], errorMean[1], errorMean[2], \
+        errorMean[3], errorMean[4], failure[0], failure[1], failure[2], \
+        failure[3], failure[4])
+    print s
 
     logfile = 'log/{0}.log'.format(nameMapper[level])
     with open(logfile, 'w') as fd:
-        s = template % (N, t, level, error.mean(0)[0], error.mean(0)[1], \
-            error.mean(0)[2], error.mean(0)[3], error.mean(0)[4], \
-            failure[0], failure[1], failure[2], failure[3], failure[4])
         fd.write(s)

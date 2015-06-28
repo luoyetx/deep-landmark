@@ -96,4 +96,3 @@ if __name__ == '__main__':
     logfile = 'log/1_NM.log'
     with open(logfile, 'w') as fd:
         fd.write(s)
-
