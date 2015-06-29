@@ -91,7 +91,7 @@ def processImage(imgs):
         process images before feeding to CNNs
         imgs: N x 1 x W x H
     """
-    imgs = imgs / 256.
+    imgs = imgs.astype(np.float32)
     for i, img in enumerate(imgs):
         m = img.mean()
         s = img.std()
