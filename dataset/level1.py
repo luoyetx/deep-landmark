@@ -130,7 +130,7 @@ def generate_hdf5(ftxt, output, fname, argument=False):
         f_face = img[f_bbox.top:f_bbox.bottom+1,f_bbox.left:f_bbox.right+1]
 
         ## data argument
-        if argument:
+        if argument and np.random.rand() > 0.5:
             ### flip
             face_flipped, landmark_flipped = flip(f_face, landmarkGt)
             face_flipped = cv2.resize(face_flipped, (39, 39)).reshape((1, 39, 39))
@@ -152,13 +152,13 @@ def generate_hdf5(ftxt, output, fname, argument=False):
         # en_face = img[en_bbox.top:en_bbox.bottom+1,en_bbox.left:en_bbox.right+1]
 
         ## data argument
-        if argument:
+        if argument and np.random.rand() > 0.5:
             ### flip
             face_flipped, landmark_flipped = flip(en_face, landmarkGt)
             face_flipped = cv2.resize(face_flipped, (31, 39)).reshape((1, 31, 39))
             landmark_flipped = landmark_flipped[:3, :].reshape((6))
-            F_imgs.append(face_flipped)
-            F_landmarks.append(landmark_flipped)
+            EN_imgs.append(face_flipped)
+            EN_landmarks.append(landmark_flipped)
 
         en_face = cv2.resize(en_face, (31, 39)).reshape((1, 31, 39))
         en_landmark = landmarkGt[:3, :].reshape((6))
@@ -170,13 +170,13 @@ def generate_hdf5(ftxt, output, fname, argument=False):
         # nm_face = img[nm_bbox.top:nm_bbox.bottom+1,nm_bbox.left:nm_bbox.right+1]
 
         ## data argument
-        if argument:
+        if argument and np.random.rand() > 0.5:
             ### flip
             face_flipped, landmark_flipped = flip(nm_face, landmarkGt)
             face_flipped = cv2.resize(face_flipped, (31, 39)).reshape((1, 31, 39))
             landmark_flipped = landmark_flipped[2:, :].reshape((6))
-            F_imgs.append(face_flipped)
-            F_landmarks.append(landmark_flipped)
+            NM_imgs.append(face_flipped)
+            NM_landmarks.append(landmark_flipped)
 
         nm_face = cv2.resize(nm_face, (31, 39)).reshape((1, 31, 39))
         nm_landmark = landmarkGt[2:, :].reshape((6))
@@ -227,7 +227,7 @@ def generate_hdf5(ftxt, output, fname, argument=False):
 if __name__ == '__main__':
     # train data
     train_txt = join(TRAIN, 'trainImageList.txt')
-    generate_hdf5(train_txt, OUTPUT, 'train.h5')
+    generate_hdf5(train_txt, OUTPUT, 'train.h5', argument=True)
 
     test_txt = join(TRAIN, 'testImageList.txt')
     generate_hdf5(test_txt, OUTPUT, 'test.h5')
