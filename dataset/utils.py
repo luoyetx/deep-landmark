@@ -44,4 +44,6 @@ def flip(face, landmark):
     """
     face_flipped_by_x = cv2.flip(face, 1)
     landmark_ = np.asarray([(1-x, y) for (x, y) in landmark])
+    landmark_[0], landmark_[1] = landmark_[1], landmark_[0]
+    landmark_[3], landmark_[4] = landmark_[4], landmark_[3]
     return (face_flipped_by_x, landmark_)
