@@ -49,8 +49,8 @@ layer {{
     }}
 }}
 layer {{
-    name: "tanh1"
-    type: "TanH"
+    name: "relu1"
+    type: "ReLU"
     bottom: "conv1"
     top: "conv1"
 }}
@@ -88,8 +88,8 @@ layer {{
     }}
 }}
 layer {{
-    name: "tanh2"
-    type: "TanH"
+    name: "relu2"
+    type: "ReLU"
     bottom: "conv2"
     top: "conv2"
 }}
@@ -126,8 +126,8 @@ layer {{
     }}
 }}
 layer {{
-    name: "tanh_fc1"
-    type: "TanH"
+    name: "relu_fc1"
+    type: "ReLU"
     bottom: "fc1"
     top: "fc1"
 }}
@@ -153,8 +153,8 @@ layer {{
     }}
 }}
 layer {{
-    name: "tanh_fc2"
-    type: "TanH"
+    name: "relu_fc2"
+    type: "ReLU"
     bottom: "fc2"
     top: "fc2"
 }}
