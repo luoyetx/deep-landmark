@@ -12,18 +12,27 @@ def level1(img, bbox, FOnly=False):
         img: gray image
         bbox: bounding box of face
     """
-    bbox = bbox.expand(0.05)
-    face = img[bbox.top:bbox.bottom+1,bbox.left:bbox.right+1]
-    face = cv2.resize(face, (39, 39)).reshape((1, 1, 39, 39))
-    face = processImage(face)
-
     F, EN, NM = getCNNs(level=1)
-    # all landmarks
-    f = F.forward(face)
+    # F
+    f_bbox = bbox.subBBox(-0.05, 1.05, -0.05, 1.05)
+    f_face = img[f_bbox.top:f_bbox.bottom+1,f_bbox.left:f_bbox.right+1]
+    f_face = cv2.resize(f_face, (39, 39)).reshape((1, 1, 39, 39))
+    f_face = processImage(f_face)
+    f = F.forward(f_face)
     if FOnly:
         return f
-    en = EN.forward(face[:, :, :31, :])
-    nm = NM.forward(face[:, :, 8:, :])
+    # EN
+    en_bbox = bbox.subBBox(-0.05, 1.05, -0.04, 0.84)
+    en_face = img[en_bbox.top:en_bbox.bottom+1,en_bbox.left:en_bbox.right+1]
+    en_face = cv2.resize(en_face, (31, 39)).reshape((1, 1, 31, 39))
+    en_face = processImage(en_face)
+    en = EN.forward(en_face)
+    # NM
+    nm_bbox = bbox.subBBox(-0.05, 1.05, 0.18, 1.05)
+    nm_face = img[nm_bbox.top:nm_bbox.bottom+1,nm_bbox.left:nm_bbox.right+1]
+    nm_face = cv2.resize(nm_face, (31, 39)).reshape((1, 1, 31, 39))
+    nm_face = processImage(nm_face)
+    nm = NM.forward(nm_face)
 
     landmark = np.zeros((5, 2))
     landmark[0] = (f[0]+en[0]) / 2

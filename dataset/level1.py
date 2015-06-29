@@ -111,7 +111,7 @@ def process_images(ftxt, output):
     return imgs, landmarks
 
 
-def generate_hdf5(ftxt, output, fname):
+def generate_hdf5(ftxt, output, fname, argument=False):
 
     data = getDataFromTxt(ftxt)
     F_imgs = []
@@ -128,6 +128,16 @@ def generate_hdf5(ftxt, output, fname):
         # F
         f_bbox = bbox.subBBox(-0.05, 1.05, -0.05, 1.05)
         f_face = img[f_bbox.top:f_bbox.bottom+1,f_bbox.left:f_bbox.right+1]
+
+        ## data argument
+        if argument:
+            ### flip
+            face_flipped, landmark_flipped = flip(f_face, landmarkGt)
+            face_flipped = cv2.resize(face_flipped, (39, 39)).reshape((1, 39, 39))
+            landmark_flipped = landmark_flipped.reshape((10))
+            F_imgs.append(face_flipped)
+            F_landmarks.append(landmark_flipped)
+
         f_face = cv2.resize(f_face, (39, 39)).reshape((1, 39, 39))
         f_landmark = landmarkGt.reshape((10))
         F_imgs.append(f_face)
@@ -136,6 +146,16 @@ def generate_hdf5(ftxt, output, fname):
         # EN
         en_bbox = bbox.subBBox(-0.05, 1.05, -0.04, 0.84)
         en_face = img[en_bbox.top:en_bbox.bottom+1,en_bbox.left:en_bbox.right+1]
+
+        ## data argument
+        if argument:
+            ### flip
+            face_flipped, landmark_flipped = flip(en_face, landmarkGt)
+            face_flipped = cv2.resize(face_flipped, (31, 39)).reshape((1, 31, 39))
+            landmark_flipped = landmark_flipped[:3, :].reshape((6))
+            F_imgs.append(face_flipped)
+            F_landmarks.append(landmark_flipped)
+
         en_face = cv2.resize(en_face, (31, 39)).reshape((1, 31, 39))
         en_landmark = landmarkGt[:3, :].reshape((6))
         EN_imgs.append(en_face)
@@ -144,6 +164,16 @@ def generate_hdf5(ftxt, output, fname):
         # NM
         nm_bbox = bbox.subBBox(-0.05, 1.05, 0.18, 1.05)
         nm_face = img[nm_bbox.top:nm_bbox.bottom+1,nm_bbox.left:nm_bbox.right+1]
+
+        ## data argument
+        if argument:
+            ### flip
+            face_flipped, landmark_flipped = flip(nm_face, landmarkGt)
+            face_flipped = cv2.resize(face_flipped, (31, 39)).reshape((1, 31, 39))
+            landmark_flipped = landmark_flipped[2:, :].reshape((6))
+            F_imgs.append(face_flipped)
+            F_landmarks.append(landmark_flipped)
+
         nm_face = cv2.resize(nm_face, (31, 39)).reshape((1, 31, 39))
         nm_landmark = landmarkGt[2:, :].reshape((6))
         NM_imgs.append(nm_face)
