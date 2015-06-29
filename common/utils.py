@@ -145,3 +145,14 @@ class BBox(object):
         for i in range(len(landmark)):
             p[i] = self.reproject(landmark[i])
         return p
+
+    def subBBox(self, leftR, rightR, topR, bottomR):
+        leftDelta = self.w * leftR
+        rightDelta = self.w * rightR
+        topDelta = self.h * topR
+        bottomDelta = self.h * bottomR
+        left = self.left + leftDelta
+        right = self.left + rightDelta
+        top = self.top + topDelta
+        bottom = self.top + bottomDelta
+        return BBox([left, right, top, bottom])
