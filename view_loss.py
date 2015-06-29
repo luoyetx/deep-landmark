@@ -11,10 +11,12 @@ def plot(f):
     """
     title = os.path.splitext(f)[0]
     df = pd.read_csv(f)
+    # filter
+    df = df[df['iteration'] > 10000]
     df.plot(x='iteration', y='loss', title=title)
     plt.savefig('%s.png'%title)
 
 if __name__ == '__main__':
     for f in os.listdir('log'):
         if os.path.splitext(f)[-1] == '.csv':
-            plot(f)
+            plot(os.path.join('log', f))
