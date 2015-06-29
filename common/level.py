@@ -6,7 +6,7 @@ from .cnns import getCNNs
 from .utils import getPatch, processImage
 
 
-def level1(img, bbox, FOnly=False):
+def level1(img, bbox, FOnly=True):
     """
         LEVEL-1
         img: gray image

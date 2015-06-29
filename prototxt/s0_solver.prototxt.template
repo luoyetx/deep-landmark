@@ -11,6 +11,10 @@ lr_policy: "inv"
 gamma: 0.0001
 power: 0.75
 
+#lr_policy: "step"
+#gamma: 0.1
+#stepsize: 50000
+
 display: 200
 
 max_iter: 100000
