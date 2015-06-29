@@ -138,14 +138,18 @@ def generate_hdf5(ftxt, output, fname, argument=False):
             F_imgs.append(face_flipped)
             F_landmarks.append(landmark_flipped)
 
-        f_face = cv2.resize(f_face, (39, 39)).reshape((1, 39, 39))
+        f_face = cv2.resize(f_face, (39, 39))
+        en_face = f_face[:31, :]
+        nm_face = f_face[8:, :]
+
+        f_face = f_face.reshape((1, 39, 39))
         f_landmark = landmarkGt.reshape((10))
         F_imgs.append(f_face)
         F_landmarks.append(f_landmark)
 
         # EN
-        en_bbox = bbox.subBBox(-0.05, 1.05, -0.04, 0.84)
-        en_face = img[en_bbox.top:en_bbox.bottom+1,en_bbox.left:en_bbox.right+1]
+        # en_bbox = bbox.subBBox(-0.05, 1.05, -0.04, 0.84)
+        # en_face = img[en_bbox.top:en_bbox.bottom+1,en_bbox.left:en_bbox.right+1]
 
         ## data argument
         if argument:
@@ -162,8 +166,8 @@ def generate_hdf5(ftxt, output, fname, argument=False):
         EN_landmarks.append(en_landmark)
 
         # NM
-        nm_bbox = bbox.subBBox(-0.05, 1.05, 0.18, 1.05)
-        nm_face = img[nm_bbox.top:nm_bbox.bottom+1,nm_bbox.left:nm_bbox.right+1]
+        # nm_bbox = bbox.subBBox(-0.05, 1.05, 0.18, 1.05)
+        # nm_face = img[nm_bbox.top:nm_bbox.bottom+1,nm_bbox.left:nm_bbox.right+1]
 
         ## data argument
         if argument:
