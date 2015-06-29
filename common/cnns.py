@@ -12,7 +12,11 @@ class CNN(object):
     def __init__(self, net, model):
         self.net = net
         self.model = model
-        self.cnn = caffe.Net(str(net), str(model), caffe.TEST)
+        try:
+            self.cnn = caffe.Net(str(net), str(model), caffe.TEST)
+        except:
+            # silence
+            print "Can not open %s, %s"%(net, model)
 
     def forward(self, data, layer='fc2'):
         fake = np.zeros((len(data), 1, 1, 1))
