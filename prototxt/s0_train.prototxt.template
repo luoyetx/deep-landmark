@@ -172,9 +172,31 @@ layer {{
     top: "conv4"
 }}
 layer {{
+    name: "pool3_flat"
+    type: "Flatten"
+    bottom: "pool3"
+    top: "pool3_flat"
+}}
+layer {{
+    name: "conv4_flat"
+    type: "Flatten"
+    bottom: "conv4"
+    top: "conv4_flat"
+}}
+layer {{
+    name: "concat"
+    type: "Concat"
+    bottom: "pool3_flat"
+    bottom: "conv4_flat"
+    top: "faker"
+    concat_param {{
+      concat_dim: 1
+    }}
+}}
+layer {{
     name: "fc1"
     type: "InnerProduct"
-    bottom: "conv4"
+    bottom: "faker"
     top: "fc1"
     param {{
         lr_mult: 1

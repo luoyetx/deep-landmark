@@ -146,6 +146,12 @@ class BBox(object):
             p[i] = self.reproject(landmark[i])
         return p
 
+    def projectLandmark(self, landmark):
+        p = np.zeros((len(landmark), 2))
+        for i in range(len(landmark)):
+            p[i] = self.project(landmark[i])
+        return p
+
     def subBBox(self, leftR, rightR, topR, bottomR):
         leftDelta = self.w * leftR
         rightDelta = self.w * rightR

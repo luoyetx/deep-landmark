@@ -15,100 +15,13 @@ import numpy as np
 import h5py
 from common import shuffle_in_unison_scary, logger, createDir, processImage
 from common import getDataFromTxt
-from utils import show_landmark, flip
+from utils import show_landmark, flip, rotate
 
 
 TRAIN = 'dataset/train'
 OUTPUT = 'train'
 if not exists(OUTPUT): os.mkdir(OUTPUT)
 assert(exists(TRAIN) and exists(OUTPUT))
-SIZE_W = SIZE_H = 39
-
-
-def process_images(ftxt, output):
-    """
-        give a txt and generate a hdf5 file with output name
-    """
-    with open(ftxt, 'r') as fd:
-        lines = fd.readlines()
-    number = len(lines) # how many faces
-    imgs = np.zeros((number*2, 1, SIZE_W, SIZE_H))
-    landmarks = np.zeros((number*2, 10))
-
-    for idx, line in enumerate(lines):
-        line = line.strip()
-        components = line.split(' ')
-        img_path = join(TRAIN, components[0].replace('\\', '/')) # file path
-        # bounding box, (left, right, top, bottom)
-        bbox = (components[1], components[2], components[3], components[4])
-        bbox = [int(_) for _ in bbox]
-        # expand bbox
-        w = bbox[1] - bbox[0]
-        h = bbox[3] - bbox[2]
-        bbox[0] -= int(w * 0.05)
-        bbox[1] += int(w * 0.05)
-        bbox[2] -= int(h * 0.05)
-        bbox[3] += int(h * 0.05)
-
-        img = cv2.imread(img_path, cv2.CV_LOAD_IMAGE_GRAYSCALE)
-
-        assert(img is not None)
-        logger("process %s" % img_path)
-
-        face = img[bbox[2]:bbox[3]+1,bbox[0]:bbox[1]+1]
-        face = cv2.resize(face, (SIZE_W, SIZE_H))
-
-        # landmark
-        # left eye center, right eye center, nose, left mouth corner, right mouth corner
-        landmark = np.zeros((5, 2))
-        for index in range(0, 5):
-            rv = (float(components[5+2*index]), float(components[5+2*index+1]))
-            landmark[index] = rv
-
-        # # rotation
-        # (face_rotated_by_alpha, landmark_rotated) = rotate(img, bbox, landmark, 5)
-        # face_rotated_by_alpha = cv2.resize(face_rotated_by_alpha, (SIZE_W, SIZE_H))
-        # show_landmark(face_rotated_by_alpha, landmark_rotated)
-        # landmarks[idx+1*number] = landmark_rotated.reshape((10))
-        # imgs[idx+1*number] = face_rotated_by_alpha.reshape((1, SIZE_W, SIZE_H))
-        # # # flip after rotation
-        # # (face_flipped_by_x, landmark_flipped) = flip(face_rotated_by_alpha, landmark_rotated)
-        # # show_landmark(face_flipped_by_x, landmark_flipped)
-        # # landmarks[idx+2*number] = landmark_flipped.reshape((10))
-        # # imgs[idx+2*number] = face_flipped_by_x.reshape((1, SIZE_W, SIZE_H))
-
-        # # rotation
-        # (face_rotated_by_alpha, landmark_rotated) = rotate(img, bbox, landmark, -5)
-        # face_rotated_by_alpha = cv2.resize(face_rotated_by_alpha, (SIZE_W, SIZE_H))
-        # show_landmark(face_rotated_by_alpha, landmark_rotated)
-        # landmarks[idx+1*number] = landmark_rotated.reshape((10))
-        # imgs[idx+1*number] = face_rotated_by_alpha.reshape((1, SIZE_W, SIZE_H))
-        # # # flip after rotation
-        # # (face_flipped_by_x, landmark_flipped) = flip(face_rotated_by_alpha, landmark_rotated)
-        # # show_landmark(face_flipped_by_x, landmark_flipped)
-        # # landmarks[idx+4*number] = landmark_flipped.reshape((10))
-        # # imgs[idx+4*number] = face_flipped_by_x.reshape((1, SIZE_W, SIZE_H))
-
-        # origin
-        for index, one in enumerate(landmark):
-            rv = ((one[0]-bbox[0])/(bbox[1]-bbox[0]), (one[1]-bbox[2])/(bbox[3]-bbox[2]))
-            landmark[index] = rv
-        #show_landmark(face, landmark)
-        landmarks[idx] = landmark.reshape((10))
-        imgs[idx] = face.reshape((1, SIZE_W, SIZE_H))
-
-        # flip
-        (face_flipped_by_x, landmark_flipped) = flip(face, landmark)
-        #show_landmark(face_flipped_by_x, landmark_flipped)
-        landmarks[idx+1*number] = landmark_flipped.reshape((10))
-        imgs[idx+1*number] = face_flipped_by_x.reshape((1, SIZE_W, SIZE_H))
-
-    imgs = processImage(imgs)
-    # for idx in range(len(imgs)):
-    #     imgs[idx] -= imgs[idx].mean()
-    shuffle_in_unison_scary(imgs, landmarks)
-
-    return imgs, landmarks
 
 
 def generate_hdf5(ftxt, output, fname, argument=False):
@@ -130,13 +43,38 @@ def generate_hdf5(ftxt, output, fname, argument=False):
         f_face = img[f_bbox.top:f_bbox.bottom+1,f_bbox.left:f_bbox.right+1]
 
         ## data argument
-        if argument and np.random.rand() > 0.5:
+        if argument and np.random.rand() > -1:
             ### flip
             face_flipped, landmark_flipped = flip(f_face, landmarkGt)
-            face_flipped = cv2.resize(face_flipped, (39, 39)).reshape((1, 39, 39))
-            landmark_flipped = landmark_flipped.reshape((10))
-            F_imgs.append(face_flipped)
-            F_landmarks.append(landmark_flipped)
+            face_flipped = cv2.resize(face_flipped, (39, 39))
+            F_imgs.append(face_flipped.reshape((1, 39, 39)))
+            F_landmarks.append(landmark_flipped.reshape(10))
+            ### rotation
+            if np.random.rand() > 0.5:
+                face_rotated_by_alpha, landmark_rotated = rotate(img, f_bbox, \
+                    bbox.reprojectLandmark(landmarkGt), 5)
+                landmark_rotated = bbox.projectLandmark(landmark_rotated)
+                face_rotated_by_alpha = cv2.resize(face_rotated_by_alpha, (39, 39))
+                F_imgs.append(face_rotated_by_alpha.reshape((1, 39, 39)))
+                F_landmarks.append(landmark_rotated.reshape(10))
+                ### flip with rotation
+                face_flipped, landmark_flipped = flip(face_rotated_by_alpha, landmark_rotated)
+                face_flipped = cv2.resize(face_flipped, (39, 39))
+                F_imgs.append(face_flipped.reshape((1, 39, 39)))
+                F_landmarks.append(landmark_flipped.reshape(10))
+            ### rotation
+            if np.random.rand() > 0.5:
+                face_rotated_by_alpha, landmark_rotated = rotate(img, f_bbox, \
+                    bbox.reprojectLandmark(landmarkGt), -5)
+                landmark_rotated = bbox.projectLandmark(landmark_rotated)
+                face_rotated_by_alpha = cv2.resize(face_rotated_by_alpha, (39, 39))
+                F_imgs.append(face_rotated_by_alpha.reshape((1, 39, 39)))
+                F_landmarks.append(landmark_rotated.reshape(10))
+                ### flip with rotation
+                face_flipped, landmark_flipped = flip(face_rotated_by_alpha, landmark_rotated)
+                face_flipped = cv2.resize(face_flipped, (39, 39))
+                F_imgs.append(face_flipped.reshape((1, 39, 39)))
+                F_landmarks.append(landmark_flipped.reshape(10))
 
         f_face = cv2.resize(f_face, (39, 39))
         en_face = f_face[:31, :]
