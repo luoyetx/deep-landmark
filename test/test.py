@@ -10,6 +10,7 @@ from functools import partial
 import cv2
 import numpy as np
 from numpy.linalg import norm
+import matplotlib.pyplot as plt
 from common import getDataFromTxt, logger
 
 
@@ -73,6 +74,49 @@ def E(level=1):
         error[i] = evaluateError(landmarkGt, landmarkP, bbox)
     return error
 
+def plotError(e, name):
+    # config global plot
+    plt.rc('font', size=16)
+    plt.rcParams["savefig.dpi"] = 240
+
+    fig = plt.figure(figsize=(20, 15))
+    binwidth = 0.001
+    yCut = np.linspace(0, 70, 100)
+    xCut = np.ones(100)*0.05
+    # left eye
+    ax = fig.add_subplot(321)
+    data = e[:, 0]
+    ax.hist(data, bins=np.arange(min(data), max(data) + binwidth, binwidth), normed=1)
+    ax.plot(xCut, yCut, 'r', linewidth=2)
+    ax.set_title('left eye')
+    # right eye
+    ax = fig.add_subplot(322)
+    data = e[:, 1]
+    ax.hist(data, bins=np.arange(min(data), max(data) + binwidth, binwidth), normed=1)
+    ax.plot(xCut, yCut, 'r', linewidth=2)
+    ax.set_title('right eye')
+    # nose
+    ax = fig.add_subplot(323)
+    data = e[:, 2]
+    ax.hist(data, bins=np.arange(min(data), max(data) + binwidth, binwidth), normed=1)
+    ax.plot(xCut, yCut, 'r', linewidth=2)
+    ax.set_title('nose')
+    # left mouth
+    ax = fig.add_subplot(325)
+    data = e[:, 3]
+    ax.hist(data, bins=np.arange(min(data), max(data) + binwidth, binwidth), normed=1)
+    ax.plot(xCut, yCut, 'r', linewidth=2)
+    ax.set_title('left mouth')
+    # right mouth
+    ax = fig.add_subplot(326)
+    data = e[:, 4]
+    ax.hist(data, bins=np.arange(min(data), max(data) + binwidth, binwidth), normed=1)
+    ax.plot(xCut, yCut, 'r', linewidth=2)
+    ax.set_title('right mouth')
+
+    fig.suptitle('%s'%name)
+    fig.savefig('log/%s.png'%name)
+
 
 nameMapper = ['F_test', 'level1_test', 'level2_test', 'level3_test']
 
@@ -101,3 +145,6 @@ if __name__ == '__main__':
     logfile = 'log/{0}.log'.format(nameMapper[level])
     with open(logfile, 'w') as fd:
         fd.write(s)
+
+    # plot error hist
+    plotError(error, nameMapper[level])
