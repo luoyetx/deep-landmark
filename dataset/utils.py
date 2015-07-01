@@ -44,3 +44,22 @@ def flip(face, landmark):
     landmark_[[0, 1]] = landmark_[[1, 0]]
     landmark_[[3, 4]] = landmark_[[4, 3]]
     return (face_flipped_by_x, landmark_)
+
+def randomShift(landmarkGt, shift):
+    """
+        Random Shift one time
+    """
+    diff = np.random.rand(5, 2)
+    diff = (2*diff - 1) * shift
+    landmarkP = landmarkGt + diff
+    return landmarkP
+
+def randomShiftWithArgument(landmarkGt, shift):
+    """
+        Random Shift more
+    """
+    N = 10
+    landmarkPs = np.zeros((N, 5, 2))
+    for i in range(N):
+        landmarkPs[i] = randomShift(landmarkGt, shift)
+    return landmarkPs

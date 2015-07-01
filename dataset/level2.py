@@ -13,7 +13,8 @@ import cv2
 import numpy as np
 import h5py
 from common import logger, createDir, getDataFromTxt, getPatch, processImage
-from common import randomShift, shuffle_in_unison_scary
+from common import shuffle_in_unison_scary
+from utils import randomShift, randomShiftWithArgument
 
 
 types = [(0, 'LE1', 0.16),
@@ -30,35 +31,36 @@ for t in types:
     d = 'train/2_%s' % t[1]
     createDir(d)
 
-def generate(ftxt, mode):
+def generate(ftxt, mode, argument=False):
     """
         Generate Training Data for LEVEL-2
         mode = train or test
     """
     data = getDataFromTxt(ftxt)
 
-    trainData = defaultdict(lambda: dict(patches=np.zeros((len(data), 1, 15, 15)), landmarks=np.zeros((len(data), 2))))
-    index = -1
+    trainData = defaultdict(lambda: dict(patches=[], landmarks=[]))
     for (imgPath, bbox, landmarkGt) in data:
         img = cv2.imread(imgPath, cv2.CV_LOAD_IMAGE_GRAYSCALE)
         assert(img is not None)
         logger("process %s" % imgPath)
 
-        landmarkP = randomShift(landmarkGt, 0.05)
+        landmarkPs = randomShiftWithArgument(landmarkGt, 0.05)
+        if not argument:
+            landmarkPs = [landmarkPs[0]]
 
-        index += 1
-        for idx, name, padding in types:
-            patch, patch_bbox = getPatch(img, bbox, landmarkP[idx], padding)
-            patch = cv2.resize(patch, (15, 15))
-            patch = patch.reshape((1, 15, 15))
-            trainData[name]['patches'][index] = patch
-            _ = patch_bbox.project(bbox.reproject(landmarkGt[idx]))
-            trainData[name]['landmarks'][index] = _
+        for landmarkP in landmarkPs:
+            for idx, name, padding in types:
+                patch, patch_bbox = getPatch(img, bbox, landmarkP[idx], padding)
+                patch = cv2.resize(patch, (15, 15))
+                patch = patch.reshape((1, 15, 15))
+                trainData[name]['patches'].append(patch)
+                _ = patch_bbox.project(bbox.reproject(landmarkGt[idx]))
+                trainData[name]['landmarks'].append(_)
 
     for idx, name, padding in types:
         logger('writing training data of %s'%name)
-        patches = trainData[name]['patches']
-        landmarks = trainData[name]['landmarks']
+        patches = np.asarray(trainData[name]['patches'])
+        landmarks = np.asarray(trainData[name]['landmarks'])
         patches = processImage(patches)
 
         shuffle_in_unison_scary(patches, landmarks)
@@ -72,7 +74,7 @@ def generate(ftxt, mode):
 
 if __name__ == '__main__':
     # trainImageList.txt
-    generate('dataset/train/trainImageList.txt', 'train')
+    generate('dataset/train/trainImageList.txt', 'train', argument=True)
     # testImageList.txt
     generate('dataset/train/testImageList.txt', 'test')
     # Done

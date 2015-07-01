@@ -31,12 +31,6 @@ def drawLandmark(img, bbox, landmark):
         cv2.circle(img, (int(x), int(y)), 2, (0,255,0), -1)
     return img
 
-def randomShift(landmarkGt, shift):
-    diff = np.random.rand(5, 2)
-    diff = (2*diff - 1) * shift
-    landmarkP = landmarkGt + diff
-    return landmarkP
-
 def getDataFromTxt(txt, with_landmark=True):
     """
         Generate data from txt file
