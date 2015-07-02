@@ -8,7 +8,7 @@ import numpy as np
 from config import PROJECT_ROOT, MEDIA_ROOT
 
 
-VERSION = 'v0.0.4'
+VERSION = 'v0.0.6'
 
 
 class CNN(object):
@@ -37,10 +37,10 @@ class BBox(object):
         Bounding Box of face
     """
     def __init__(self, bbox):
-        self.left = bbox[0]
-        self.right = bbox[1]
-        self.top = bbox[2]
-        self.bottom = bbox[3]
+        self.left = int(bbox[0])
+        self.right = int(bbox[1])
+        self.top = int(bbox[2])
+        self.bottom = int(bbox[3])
         self.x = bbox[0]
         self.y = bbox[2]
         self.w = bbox[1] - bbox[0]
@@ -113,7 +113,7 @@ class Landmarker(object):
                     for name in CNN_TYPES]
         self.level1 = [CNN(p, m) for p, m in level1]
         self.level2 = [CNN(p, m) for p, m in level2]
-        self.level3 = [CNN(p. m) for p, m in level3]
+        self.level3 = [CNN(p, m) for p, m in level3]
 
     def detectLandmark(self, image, bbox, mode='fast'):
         """
@@ -123,6 +123,8 @@ class Landmarker(object):
         if not isinstance(bbox, BBox) or image is None:
             return None, False
         face = bbox.cropImage(image)
+        face = cv2.resize(face, (39, 39)).reshape((1, 1, 39, 39))
+        face = self._processImage(face)
         # level-1, only F in implemented
         landmark = self.level1[0].forward(face)
         # level-2
@@ -189,13 +191,16 @@ class FaceDetector(object):
     def detectFace(self, img):
         rects = self.cc.detectMultiScale(img, scaleFactor=1.2, minNeighbors=2, \
                     minSize=(30, 30), flags = cv2.CASCADE_SCALE_IMAGE)
-        return rects
+        for rect in rects:
+            rect[2:] += rect[:2]
+            yield BBox([rect[0], rect[2], rect[1], rect[3]])
 
 
 def drawLandmark(img, bbox, landmark):
     cv2.rectangle(img, (bbox.left, bbox.top), (bbox.right, bbox.bottom), (0,0,255), 2)
     for x, y in landmark:
-        cv2.circle(img, (int(x), int(y)), 2, (0,255,0), -1)
+        print x, y
+        cv2.circle(img, (int(x), int(y)), 1, (0,255,0), -1)
     return img
 
 def detectLandmarks(src, dst):
@@ -209,12 +214,13 @@ def detectLandmarks(src, dst):
 
     bboxes = []
     landmarks = []
-    for bbox in fd.detectFace(img):
+    for bbox in fd.detectFace(gray):
+        bbox = bbox.subBBox(0.1, 0.9, 0.2, 1)
         bboxes.append(bbox)
-        landmark = fl.detectLandmark(img, bbox)
-        landmarks.append(landmark)
+        landmark, status = fl.detectLandmark(gray, bbox)
+        landmarks.append(bbox.reprojectLandmark(landmark))
 
-    for i in range(len(bbox)):
+    for i in range(len(bboxes)):
         img = drawLandmark(img, bboxes[i], landmarks[i])
 
-    cv2.imwrite(img, dst)
+    cv2.imwrite(dst, img)
