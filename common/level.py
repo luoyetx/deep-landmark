@@ -47,17 +47,17 @@ def level1(img, bbox, FOnly=True):
     return landmark
 
 
-def _level(img, bbox, landmark, cnns):
+def _level(img, bbox, landmark, cnns, padding):
     """
         LEVEL-?
     """
     for i in range(5):
         x, y = landmark[i]
-        patch, patch_bbox = getPatch(img, bbox, (x, y), 0.16)
+        patch, patch_bbox = getPatch(img, bbox, (x, y), padding[0])
         patch = cv2.resize(patch, (15, 15)).reshape((1, 1, 15, 15))
         patch = processImage(patch)
         d1 = cnns[2*i].forward(patch) # size = 1x2
-        patch, patch_bbox = getPatch(img, bbox, (x, y), 0.18)
+        patch, patch_bbox = getPatch(img, bbox, (x, y), padding[1])
         patch = cv2.resize(patch, (15, 15)).reshape((1, 1, 15, 15))
         patch = processImage(patch)
         d2 = cnns[2*i+1].forward(patch)
@@ -75,7 +75,7 @@ def level2(img, bbox):
     """
     landmark = level1(img, bbox)
     cnns = getCNNs(2)
-    landmark = _level(img, bbox, landmark, cnns)
+    landmark = _level(img, bbox, landmark, cnns, [0.16, 0.18])
     return landmark
 
 def level3(img, bbox):
@@ -86,7 +86,7 @@ def level3(img, bbox):
     """
     landmark = level1(img, bbox)
     cnns = getCNNs(2)
-    landmark = _level(img, bbox, landmark, cnns)
+    landmark = _level(img, bbox, landmark, cnns, [0.16, 0.18])
     cnns = getCNNs(3)
-    landmark = _level(img, bbox, landmark, cnns)
+    landmark = _level(img, bbox, landmark, cnns, [0.11, 0.12])
     return landmark

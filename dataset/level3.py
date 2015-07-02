@@ -8,6 +8,7 @@
 
 import os
 from os.path import join, exists
+import time
 from collections import defaultdict
 import cv2
 import numpy as np
@@ -44,7 +45,7 @@ def generate(ftxt, mode, argument=False):
         assert(img is not None)
         logger("process %s" % imgPath)
 
-        landmarkPs = randomShiftWithArgument(landmarkGt, 0.05)
+        landmarkPs = randomShiftWithArgument(landmarkGt, 0.02)
         if not argument:
             landmarkPs = [landmarkPs[0]]
 
@@ -73,6 +74,7 @@ def generate(ftxt, mode, argument=False):
 
 
 if __name__ == '__main__':
+    np.random.seed(int(time.time()))
     # trainImageList.txt
     generate('dataset/train/trainImageList.txt', 'train', argument=True)
     # testImageList.txt

@@ -17,7 +17,7 @@ power: 0.75
 
 display: 200
 
-max_iter: 100000
+max_iter: 500000
 
 snapshot: 10000
 snapshot_prefix: "model/{level}_{name}/"
