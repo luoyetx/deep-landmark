@@ -34,7 +34,7 @@ def index():
 
     # save file first
     f = request.files['file']
-    if f is None: abort(403)
+    if f.filename == '': abort(403)
     md5 = hashlib.md5(f.filename + app.config['MD5_SALT']).hexdigest()
     fpath = join(join(app.config['MEDIA_ROOT'], 'upload'), md5+'.jpg')
     f.save(fpath)
