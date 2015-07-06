@@ -2,6 +2,7 @@
 import os
 from os.path import join, exists
 import hashlib
+import requests
 from flask import Flask
 from flask import request, redirect, url_for, abort
 from flask import render_template
@@ -11,12 +12,29 @@ from landmark import detectLandmarks
 app = Flask(__name__)
 app.config.from_object('config')
 
+headers = {
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+    'Accept-Encoding': 'gzip, deflate, sdch',
+    'Host': 'image.baidu.com',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.65 Safari/537.36',
+}
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'GET':
         return render_template('index.html')
+    # check url first
+    url = request.form.get('url', None)
+    if url != '':
+        md5 = hashlib.md5(url+app.config['MD5_SALT']).hexdigest()
+        fpath = join(join(app.config['MEDIA_ROOT'], 'upload'), md5+'.jpg')
+        r = os.system('wget %s -O "%s"'%(url, fpath))
+        if r != 0: abort(403)
+        return redirect(url_for('landmark', hash=md5))
+
     # save file first
     f = request.files['file']
+    if f is None: abort(403)
     md5 = hashlib.md5(f.filename + app.config['MD5_SALT']).hexdigest()
     fpath = join(join(app.config['MEDIA_ROOT'], 'upload'), md5+'.jpg')
     f.save(fpath)
