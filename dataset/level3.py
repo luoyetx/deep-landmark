@@ -45,7 +45,7 @@ def generate(ftxt, mode, argument=False):
         assert(img is not None)
         logger("process %s" % imgPath)
 
-        landmarkPs = randomShiftWithArgument(landmarkGt, 0.02)
+        landmarkPs = randomShiftWithArgument(landmarkGt, 0.01)
         if not argument:
             landmarkPs = [landmarkPs[0]]
 
