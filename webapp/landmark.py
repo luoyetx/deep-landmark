@@ -199,9 +199,11 @@ class FaceDetector(object):
 def drawLandmark(img, bbox, landmark):
     cv2.rectangle(img, (bbox.left, bbox.top), (bbox.right, bbox.bottom), (0,0,255), 2)
     for x, y in landmark:
-        print x, y
         cv2.circle(img, (int(x), int(y)), 1, (0,255,0), -1)
     return img
+
+fd = FaceDetector()
+fl = Landmarker()
 
 def detectLandmarks(src, dst):
     """
@@ -209,8 +211,6 @@ def detectLandmarks(src, dst):
     """
     img = cv2.imread(src)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    fd = FaceDetector()
-    fl = Landmarker()
 
     bboxes = []
     landmarks = []
