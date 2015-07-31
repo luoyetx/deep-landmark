@@ -3,7 +3,7 @@ net: "prototxt/{level}_{name}_train.prototxt"
 test_iter: 25
 test_interval: 1000
 
-base_lr: 0.01
+base_lr: 0.005
 momentum: 0.9
 weight_decay: 0.0005
 
@@ -17,7 +17,7 @@ power: 0.75
 
 display: 200
 
-max_iter: 500000
+max_iter: 100000
 
 snapshot: 10000
 snapshot_prefix: "model/{level}_{name}/"

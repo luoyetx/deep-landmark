@@ -30,26 +30,28 @@ class CNN(object):
 
 # global cnns
 cnn = dict(level1=None, level2=None, level3=None)
-m = '_iter_500000.caffemodel'
+m1 = '_iter_1000000.caffemodel'
+m2 = '_iter_500000.caffemodel'
+m3 = '_iter_100000.caffemodel'
 
 def getCNNs(level=1):
     types = ['LE1', 'LE2', 'RE1', 'RE2', 'N1', 'N2', 'LM1', 'LM2', 'RM1', 'RM2']
     if level == 1:
         if cnn['level1'] is None:
-            F = CNN('prototxt/1_F_deploy.prototxt', 'model/1_F/%s'%('_iter_1000000.caffemodel'))
-            EN = CNN('prototxt/1_EN_deploy.prototxt', 'model/1_EN/%s'%('_iter_100000.caffemodel'))
-            NM = CNN('prototxt/1_NM_deploy.prototxt', 'model/1_NM/%s'%('_iter_100000.caffemodel'))
+            F = CNN('prototxt/1_F_deploy.prototxt', 'model/1_F/%s'%(m1))
+            EN = CNN('prototxt/1_EN_deploy.prototxt', 'model/1_EN/%s'%(m1))
+            NM = CNN('prototxt/1_NM_deploy.prototxt', 'model/1_NM/%s'%(m1))
             cnn['level1'] = [F, EN, NM]
         return cnn['level1']
     elif level == 2:
         if cnn['level2'] is None:
             cnn['level2'] = []
             for t in types:
-                cnn['level2'].append(CNN('prototxt/2_%s_deploy.prototxt'%t, 'model/2_%s/%s'%(t,m)))
+                cnn['level2'].append(CNN('prototxt/2_%s_deploy.prototxt'%t, 'model/2_%s/%s'%(t,m2)))
         return cnn['level2']
     else:
         if cnn['level3'] is None:
             cnn['level3'] = []
             for t in types:
-                cnn['level3'].append(CNN('prototxt/3_%s_deploy.prototxt'%t, 'model/3_%s/%s'%(t,m)))
+                cnn['level3'].append(CNN('prototxt/3_%s_deploy.prototxt'%t, 'model/3_%s/%s'%(t,m3)))
         return cnn['level3']
