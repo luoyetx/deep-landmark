@@ -3,7 +3,7 @@ deep-landmark
 
 Predict facial landmarks with Deep CNNs powered by Caffe.
 
-This project is a reimplementation of the paper from CUHK. Sun, Y., Wang, X., Tang, X. Deep convolutional network cascade for facial point detection. CVPR 2013.
+This project is a reimplementation of the paper from CUHK, Y. Sun, X. Wang, and X. Tang. Deep Convolutional Network Cascade for Facial Point Detection. CVPR 2013.
 
 ### Data
 
@@ -56,4 +56,4 @@ https://youtu.be/oNiAtu0erEk
 
 1. [Caffe](http://caffe.berkeleyvision.org/)
 2. [Deep Convolutional Network Cascade for Facial Point Detection](http://mmlab.ie.cuhk.edu.hk/archive/CNN_FacePoint.htm)
-3. Sun, Y., Wang, X., Tang, X. Deep convolutional network cascade for facial point detection. CVPR 2013.
+3. Y. Sun, X. Wang, and X. Tang. Deep Convolutional Network Cascade for Facial Point Detection. CVPR 2013.
