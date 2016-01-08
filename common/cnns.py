@@ -31,7 +31,7 @@ class CNN(object):
 # global cnns
 cnn = dict(level1=None, level2=None, level3=None)
 m1 = '_iter_1000000.caffemodel'
-m2 = '_iter_500000.caffemodel'
+m2 = '_iter_100000.caffemodel'
 m3 = '_iter_100000.caffemodel'
 
 def getCNNs(level=1):
