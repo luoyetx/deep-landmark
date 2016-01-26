@@ -3,7 +3,7 @@ deep-landmark
 
 Predict facial landmarks with Deep CNNs powered by Caffe.
 
-This project is a reimplementation of the paper from CUHK, Y. Sun, X. Wang, and X. Tang. Deep Convolutional Network Cascade for Facial Point Detection. CVPR 2013.
+This project is a reimplementation of the paper Deep Convolutional Network Cascade for Facial Point Detection.
 
 ### Data
 
@@ -25,7 +25,10 @@ I **strongly** suggest you to train every CNN seperately. It's every important t
 
 ### View Trainging Logs
 
-I have modified Caffe source code to log the test loss over every test, and I write `view_loss.py` to plot the loss, all log file are under `log` so as plot. If the loss plot is unusual, retraining the CNN model is needed.
+~~I have modified Caffe source code to log the test loss over every test, and I write `view_loss.py` to plot the loss, all log file are under `log` so as plot. If the loss plot is unusual, retraining the CNN model is needed.~~
+
+Caffe will log all stuffs during the network training, you can find the log file under `/tmp` or you can give Caffe a hit where to save the log file. If you want to see the training
+ loss curve, you should write a program to parse the log file yourself.
 
 ### Models
 
@@ -56,4 +59,3 @@ https://youtu.be/oNiAtu0erEk
 
 1. [Caffe](http://caffe.berkeleyvision.org/)
 2. [Deep Convolutional Network Cascade for Facial Point Detection](http://mmlab.ie.cuhk.edu.hk/archive/CNN_FacePoint.htm)
-3. Y. Sun, X. Wang, and X. Tang. Deep Convolutional Network Cascade for Facial Point Detection. CVPR 2013.
