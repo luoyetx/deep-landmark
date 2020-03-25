@@ -6,7 +6,7 @@ import requests
 from flask import Flask
 from flask import request, redirect, url_for, abort
 from flask import render_template
-#from landmark import detectLandmarks
+from landmark import detectLandmarks
 
 
 app = Flask(__name__)
