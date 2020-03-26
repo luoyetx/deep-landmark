@@ -28,8 +28,12 @@ def index():
     if url != '':
         md5 = hashlib.md5(url+app.config['MD5_SALT']).hexdigest()
         fpath = join(join(app.config['MEDIA_ROOT'], 'upload'), md5+'.jpg')
-        r = os.system('wget %s -O "%s"'%(url, fpath))
-        if r != 0: abort(403)
+        try:
+            response = requests.get(url)
+            with open(fpath, 'wb') as fout:
+                fout.write(response.content)
+        except Exception:
+            abort(403)
         return redirect(url_for('landmark', hash=md5))
 
     # save file first
